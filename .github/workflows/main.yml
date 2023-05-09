@@ -1,0 +1,26 @@
+name: RDP with Ngrok
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Downloading Ngrok
+      run: |
+        Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile Downloads.bat
+        cmd /c Downloads.bat
+
+    - name: Connect to Ngrok Account
+      run: ngrok authtoken YOUR_AUTH_TOKEN
+      env:
+        NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+
+    - name: Enabling RDP Access
+      run: |
+        Invoke-WebRequest https://gist.githubusercontent.com/adalenv/c3b51a3e3b05f1d80c54f95ca4791b8f/raw/260d9257d77318c51f3fb3a61c1fc19d048f0525/Enable-RDPAccess.bat -OutFile Access.bat
+        cmd /c Access.bat
+        
+    - name: Start RDP
+      run: |
+        Invoke-WebRequest https://gist.githubusercontent.com/adalenv/ce476dc178f03824d02f93ebf6e2ab57/raw/9f875c982e2fc5c5fc5a5b5e5b3d3f5bc5f8c10e/start-rdp.bat -OutFile RDP.bat
+        cmd /c RDP.bat
